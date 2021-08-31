@@ -43,7 +43,7 @@ services:
     ports:
       - '5044:5044'
     environment:
-      LS_JAVA_OPTS: '-Xmx256m -Xms256m'
+      LS_JAVA_OPTS: '-Xmx512m -Xms512m'
       PASSWORD: $PASSWORD
     volumes:
       - ./logstash/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
@@ -91,6 +91,22 @@ services:
     depends_on:
       kibana:
         condition: service_healthy
+
+  dnsmasq:
+    image: jpillora/dnsmasq
+    container_name: dnsmasq
+    ports:
+      - '53:53/udp'
+      - '8080:8080'
+    volumes:
+      - ./data/dns/dnsmasq.conf:/etc/dnsmasq.conf
+    logging:
+      driver: 'json-file'
+      options:
+        max-size: '100m'
+    environment:
+      HTTP_USER: admin
+      HTTP_PASS: admin
 
 volumes:
   data:
